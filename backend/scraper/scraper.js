@@ -58,7 +58,7 @@ const getCoAuthorsListAndUrlsCoAuthorsList = (modalUrl) => {
 
       resolve({
         coAuthorsList: coAuthorsList,
-        urlsCoAuthorsList: hrefsCoAuthorsList,
+        hrefsCoAuthorsList: hrefsCoAuthorsList,
       });
     });
   });
@@ -71,7 +71,7 @@ const scrape = async (authorUrl) => {
     var lists = await getCoAuthorsListAndUrlsCoAuthorsList(modalUrl);
     // console.log(lists);
     var coAuthorsList = lists.coAuthorsList;
-    var hrefsCoAuthorsList = lists.urlsCoAuthorsList;
+    var hrefsCoAuthorsList = lists.hrefsCoAuthorsList;
     var userLimit = 3;
 
     console.log(`**********${getAuthorFromUrl(authorUrl)}**********`);
@@ -93,4 +93,4 @@ const scrape = async (authorUrl) => {
 
 scrape(zamfiProfileUrl);
 
-// module.exports = getAuthors;
+module.exports = scrape;
