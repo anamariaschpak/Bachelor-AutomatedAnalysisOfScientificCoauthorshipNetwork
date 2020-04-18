@@ -78,7 +78,7 @@ CoAuthor.init(
       unique: true,
     },
   },
-  { sequelize, modelName: coAuthor }
+  { sequelize, modelName: "coAuthor" }
 );
 
 const AuthorCoAuthors = sequelize.define(

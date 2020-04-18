@@ -2,6 +2,22 @@ const cheerio = require("cheerio");
 const axios = require("axios");
 var HTMLParser = require("node-html-parser");
 var request = require("request");
+const Sequelize = require("sequelize");
+const { Author, CoAuthor } = require("../models/models");
+const async = require("async");
+
+const sequelize = new Sequelize("thesisDB", "root", "p@ss", {
+  dialect: "mysql",
+});
+
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log("Connection has been established succesfully.");
+  })
+  .then((err) => {
+    console.log("Unable to connect to the DB: ", err);
+  });
 
 const zamfiProfileUrl = "https://www.researchgate.net/profile/Zamfiroiu_Alin";
 
@@ -18,7 +34,7 @@ const getModalUrl = (authorUrl) => {
   return new Promise((resolve) => {
     request(authorUrl, function (error, response, html) {
       var $ = cheerio.load(html);
-      //console.log(response.statusCode);
+      console.log(response.statusCode);
       var anchors = $("#lite-page > main").find("a");
       anchors.each(function (i, elem) {
         if (
@@ -72,7 +88,36 @@ const scrape = async (authorUrl) => {
     // console.log(lists);
     var coAuthorsList = lists.coAuthorsList;
     var hrefsCoAuthorsList = lists.hrefsCoAuthorsList;
-    var userLimit = 3;
+    var userLimit = 1;
+
+    //aici faci inserarea in baza de date, pt ca aici se obtine lista de co-autori:
+    //   https://stackoverflow.com/questions/31815076/node-sequelize-how-to-check-if-item-exists-before-adding-async-confusion
+
+    async.eachSeries(visitedAuthors, function (authorName, callback) {
+      Author.sync().then(function () {
+        Author.findOrCreate({
+          where: {
+            name: authorName.trim(),
+          },
+          defaults: {
+            name: authorName.trim(),
+          },
+        }).then(function (result) {
+          var author = result[0];
+          var createdAuthor = result[1]; // 1 => created, 0 => found(already exists)
+
+          if (!createdAuthor) {
+            console.log(
+              "XXXXXXXXXXXXXXXXXX Author already exists XXXXXXXXXXXXXXXXXX"
+            );
+          } else {
+            console.log("************Author created************");
+          }
+
+          callback();
+        });
+      });
+    });
 
     console.log(`**********${getAuthorFromUrl(authorUrl)}**********`);
     console.log(coAuthorsList);
