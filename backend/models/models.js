@@ -1,4 +1,4 @@
-const Sequelize = require("sequelize");
+const { Sequelize, DataTypes } = require("sequelize");
 
 const sequelize = new Sequelize("thesisDB", "root", "p@ss", {
   dialect: "mysql",
@@ -42,53 +42,77 @@ User.init(
   { sequelize, modelName: "user" }
 );
 
-class Author extends Model {}
-Author.init(
-  {
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    name: {
-      type: Sequelize.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    isParsed: {
-      type: Sequelize.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
+const Author = sequelize.define("Author", {
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  isParsed: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+});
+
+const Coauthor = sequelize.define("Coauthor", {
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: true,
+  },
+});
+
+const Authorcoauthors = sequelize.define("Authorcoauthors", {
+  authorId: {
+    type: Sequelize.STRING,
+    references: {
+      model: Author,
+      key: "id",
     },
   },
-  { sequelize, modelName: "author" }
-);
-
-class CoAuthor extends Model {}
-CoAuthor.init(
-  {
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    name: {
-      type: Sequelize.STRING,
-      allowNull: false,
-      unique: true,
+  coAuthorId: {
+    type: Sequelize.STRING,
+    references: {
+      model: Coauthor,
+      key: "id",
     },
   },
-  { sequelize, modelName: "coAuthor" }
-);
+});
 
-const AuthorCoAuthors = sequelize.define(
-  "AuthorCoAuthors",
-  {},
-  { timestamps: false }
-);
-Author.belongsToMany(CoAuthor, { through: AuthorCoAuthors });
-CoAuthor.belongsToMany(Author, { through: AuthorCoAuthors });
+// const AuthorCoauthors = sequelize.define(
+//   "AuthorCoauthors",
+//   { selfGranted: DataTypes.BOOLEAN },
+//   { timestamps: false }
+// );
 
-sequelize.sync();
+Author.belongsToMany(Coauthor, {
+  through: Authorcoauthors,
+  foreignKey: "coAuthorId",
+  as: "coauthor",
+});
+Coauthor.belongsToMany(Author, {
+  through: Authorcoauthors,
+  foreignKey: "authorId",
+  as: "author",
+});
 
-module.exports = { sequelize, User, Author, CoAuthor };
+sequelize.sync({ force: true });
+
+module.exports = {
+  sequelize,
+  User,
+  Author,
+  Coauthor,
+  Authorcoauthors,
+};
