@@ -65,84 +65,63 @@ const getCoAuthorsListAndHrefsCoAuthorsList = (modalUrl) => {
   });
 };
 
-// const findCoAuthorsByAuthorId = () => {
-//   CoAuthor.findAll({
-//     where: {
-//       otherKey: 1,
-//     },
-//   }).then((coAuthors) => {
-//     coAuthors.forEach((item) => console.log(item.name));
-//   });
-// };
-
 const scrape = async (authorUrl) => {
   try {
     visitedAuthors.push(getAuthorFromUrl(authorUrl));
     var modalUrl = await getModalUrl(authorUrl);
     var lists = await getCoAuthorsListAndHrefsCoAuthorsList(modalUrl);
-    // console.log(lists);
     var coAuthorsList = lists.coAuthorsList;
     var hrefsCoAuthorsList = lists.hrefsCoAuthorsList;
-    var userLimit = 1;
+    var userLimit = 4;
 
     currentAuthor = getAuthorFromUrl(authorUrl);
 
-    //aici faci inserarea in baza de date, pt ca aici se obtine lista de co-autori:
-    //   https://stackoverflow.com/questions/31815076/node-sequelize-how-to-check-if-item-exists-before-adding-async-confusion
+    Author.findOrCreate({
+      where: {
+        name: currentAuthor.trim(),
+      },
+      defaults: {
+        name: currentAuthor.trim(),
+      },
+    }).then(function (authorResult) {
+      var author = authorResult[0];
+      var createdAuthor = authorResult[1]; //DO NOT REMOVE: 1 => created, 0 => found(already exists)
 
-    async.eachSeries(visitedAuthors, function (authorName, callback) {
-      const newAuthor = Author.findOrCreate({
-        where: {
-          name: authorName.trim(),
-        },
-        defaults: {
-          name: authorName.trim(),
-        },
-      }).then(function (result) {
-        var author = result[0];
-        var createdAuthor = result[1]; // 1 => created, 0 => found(already exists)
+      if (!createdAuthor) {
+        console.log("000000000000000 Author already exists 000000000000000");
+      } else {
+        console.log("11111111111111 Author created 11111111111111");
 
-        if (!createdAuthor) {
-          console.log("000000000000000 Author already exists 000000000000000");
-        } else {
-          console.log("11111111111111 Author created 11111111111111");
+        async.eachSeries(coAuthorsList, function (coAuthorName, callback) {
+          Coauthor.findOrCreate({
+            where: {
+              name: coAuthorName.trim(),
+            },
+            defaults: {
+              name: coAuthorName.trim(),
+            },
+          }).then(function (coauthorResult) {
+            var coauthor = coauthorResult[0];
+            var createdCoauthor = coauthorResult[1];
 
-          async.eachSeries(coAuthorsList, function (coAuthorName, callback) {
-            const newCoAuthor = Coauthor.findOrCreate({
-              where: {
-                name: coAuthorName.trim(),
-              },
-              defaults: {
-                name: coAuthorName.trim(),
-              },
-            }).then(function (result) {
-              var coAuthor = result[0];
-              var createdCoAuthor = result[1];
+            if (!createdCoauthor) {
+              console.log(
+                "000000000000000 CoAuthor already exists 000000000000000"
+              );
+              coauthor.addAuthor(author, { through: Authorcoauthors });
+            } else {
+              console.log("11111111111111 CoAuthor created 11111111111111");
 
-              if (!createdCoAuthor) {
-                console.log(
-                  "000000000000000 CoAuthor already exists 000000000000000"
-                );
-              } else {
-                console.log("11111111111111 CoAuthor created 11111111111111");
-                newAuthor.addcoauthor(newCoAuthor, {
-                  through: "Authorcoauthors",
-                });
-              }
+              author.addCoauthor(coauthor, { through: Authorcoauthors });
+              author.isParsed = true;
+              author.save();
+            }
 
-              callback();
-            });
+            callback();
           });
-        }
-
-        callback();
-      });
+        });
+      }
     });
-
-    //https://github.com/sequelize/sequelize/issues/5325
-    //https://sequelize.org/master/class/lib/associations/has-many.js~HasMany.html
-    //https://sequelize.readthedocs.io/en/v3/docs/associations/
-    //https://github.com/sequelize/sequelize/issues/5036
 
     console.log(`**********${getAuthorFromUrl(authorUrl)}**********`);
     console.log(coAuthorsList);
@@ -151,7 +130,7 @@ const scrape = async (authorUrl) => {
     for (var i = 0; i < hrefsCoAuthorsList.length; i++) {
       if (
         !visitedAuthors.includes(getAuthorFromUrl(hrefsCoAuthorsList[i])) &&
-        visitedAuthors.length <= userLimit
+        visitedAuthors.length < userLimit
       ) {
         currentCoAuthor = getAuthorFromUrl(hrefsCoAuthorsList[i]);
         scrape("https://www.researchgate.net/" + hrefsCoAuthorsList[i]);
@@ -163,5 +142,7 @@ const scrape = async (authorUrl) => {
 };
 
 scrape(zamfiProfileUrl);
+//DO NOT REMOVE: SQL query:
+//   select ac.authorId,a.name,ac.coauthorId,c.name from authorcoauthors as ac,coauthors as c,authors as a where ac.coauthorId=c.id and ac.authorId=a.id order by ac.authorid ;
 
 module.exports = scrape;
