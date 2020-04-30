@@ -86,7 +86,7 @@ Coauthor.belongsToMany(Author, {
   foreignKey: "coauthorId",
 });
 
-sequelize.sync({ force: true });
+sequelize.sync();
 
 module.exports = {
   sequelize,

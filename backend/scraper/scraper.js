@@ -72,13 +72,14 @@ const scrape = async (authorUrl) => {
     var lists = await getCoAuthorsListAndHrefsCoAuthorsList(modalUrl);
     var coAuthorsList = lists.coAuthorsList;
     var hrefsCoAuthorsList = lists.hrefsCoAuthorsList;
-    var userLimit = 4;
+    var userLimit = 10;
 
     currentAuthor = getAuthorFromUrl(authorUrl);
 
     Author.findOrCreate({
       where: {
         name: currentAuthor.trim(),
+        isParsed: true,
       },
       defaults: {
         name: currentAuthor.trim(),
