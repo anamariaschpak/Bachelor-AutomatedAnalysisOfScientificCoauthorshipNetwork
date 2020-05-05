@@ -15,6 +15,7 @@
     "cheerio": "^1.0.0-rc.3",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.1.0",
     "node-html-parser": "^1.2.14",
     "nodemon": "^2.0.2",

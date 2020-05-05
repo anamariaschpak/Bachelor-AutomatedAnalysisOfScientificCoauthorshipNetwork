@@ -1,29 +1,38 @@
 const { User } = require("../models/models");
 
 const user = {
-  create: async user => {
+  create: async (user) => {
     try {
-      const createdUser = await User.create(user);
+      const existingUser = await User.findOne({
+        where: {
+          username: user.username,
+          email: user.email,
+        },
+      });
 
-      return createdUser;
+      if (!existingUser) {
+        const createdUser = await User.create(user);
+        return createdUser;
+      } else {
+        return undefined;
+      }
     } catch (error) {
       throw new Error(error.message);
     }
   },
-  authenticate: async (username, password) => {
+  search: async (email) => {
     try {
-      const authenticatedUser = await User.findOne({
+      const foundUser = await User.findOne({
         where: {
-          username: username,
-          password: password
-        }
+          email: email,
+        },
       });
 
-      return authenticatedUser;
+      return foundUser;
     } catch (error) {
       throw new Error(error.message);
     }
-  }
+  },
 };
 
 module.exports = user;

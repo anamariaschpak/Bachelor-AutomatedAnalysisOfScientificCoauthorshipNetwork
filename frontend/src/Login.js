@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import {
   Button,
   Form,
@@ -7,19 +8,34 @@ import {
   Message,
   Segment,
 } from "semantic-ui-react";
+import Home from "./Home";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const history = useHistory();
 
   function validateForm() {
     return email.length > 0 && password.length > 0;
   }
 
   function handleSubmit(event) {
-    // console.log("email: " + email);
-    // console.log("pass: " + password);
     event.preventDefault();
+
+    const requestOptions = {
+      method: "POST", //to do: why post and not get in login
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email, password: password }),
+    };
+
+    fetch("http://localhost:3001/api/login", requestOptions).then(
+      //TODO: port 8080 pe backend
+      (response) => {
+        if (response.status == 200) {
+          history.push("/home");
+        }
+      }
+    );
   }
 
   return (
@@ -59,7 +75,7 @@ export default function Login() {
           </Segment>
         </Form>
         <Message>
-          Not registered yet? <a href="#">Sign Up</a>
+          Not registered yet? <Link to="/register">Sign Up</Link>
         </Message>
       </Grid.Column>
     </Grid>
