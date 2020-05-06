@@ -10,13 +10,15 @@ const createUser = async (request, response) => {
   ) {
     // const createdUser =
     const result = await userService.create(userFromRequestBody);
+    // console.log("--------Created user: " + result.username);
     if (result) {
       response.status(200).json({
         message: "User entry succesfully created.",
       });
     } else {
       response.status(400).json({
-        message: "User not created: user already exists!",
+        message:
+          "User not created: user already exists with this email address or this username is taken!",
       });
     }
   } else {

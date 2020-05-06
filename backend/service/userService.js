@@ -10,14 +10,15 @@ const user = {
         },
       });
 
-      if (!existingUser) {
+      if (existingUser === null) {
         const createdUser = await User.create(user);
         return createdUser;
       } else {
         return undefined;
       }
     } catch (error) {
-      throw new Error(error.message);
+      // throw new Error("------Aici:" + error.message); => DO NOT uncomment this and DO NOT remove this comment => it causes ERROR
+      console.log(error.message);
     }
   },
   search: async (email) => {
@@ -30,7 +31,8 @@ const user = {
 
       return foundUser;
     } catch (error) {
-      throw new Error(error.message);
+      // throw new Error(error.message);
+      console.log(error.message);
     }
   },
 };
