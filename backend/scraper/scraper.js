@@ -10,10 +10,10 @@ const zamfiProfileUrl = "https://www.researchgate.net/profile/Zamfiroiu_Alin";
 const modalZamfiUrl =
   "https://www.researchgate.net/lite.ProfileDetailsLoadMore.getCoAuthorByOffset.html?accountId=1855609&offset=50";
 var visitedAuthors = [];
-var currentAuthor = "";
+var currentAuthorName = "";
 var currentCoAuthor = "";
 
-const getAuthorFromUrl = (authorUrl) => {
+const getAuthorNameFromUrl = (authorUrl) => {
   return authorUrl.substring(authorUrl.lastIndexOf("/") + 1).replace(/_/g, " ");
 };
 
@@ -67,22 +67,22 @@ const getCoAuthorsListAndHrefsCoAuthorsList = (modalUrl) => {
 
 const scrape = async (authorUrl) => {
   try {
-    visitedAuthors.push(getAuthorFromUrl(authorUrl));
     var modalUrl = await getModalUrl(authorUrl);
     var lists = await getCoAuthorsListAndHrefsCoAuthorsList(modalUrl);
     var coAuthorsList = lists.coAuthorsList;
     var hrefsCoAuthorsList = lists.hrefsCoAuthorsList;
     var userLimit = 10;
 
-    currentAuthor = getAuthorFromUrl(authorUrl);
+    currentAuthorName = getAuthorNameFromUrl(authorUrl);
+    visitedAuthors.push(currentAuthorName);
 
     Author.findOrCreate({
       where: {
-        name: currentAuthor.trim(),
+        name: currentAuthorName.trim(),
         isParsed: true,
       },
       defaults: {
-        name: currentAuthor.trim(),
+        name: currentAuthorName.trim(),
       },
     }).then(function (authorResult) {
       var author = authorResult[0];
@@ -124,16 +124,16 @@ const scrape = async (authorUrl) => {
       }
     });
 
-    console.log(`**********${getAuthorFromUrl(authorUrl)}**********`);
+    console.log(`**********${getAuthorNameFromUrl(authorUrl)}**********`);
     console.log(coAuthorsList);
     console.log(hrefsCoAuthorsList);
 
     for (var i = 0; i < hrefsCoAuthorsList.length; i++) {
       if (
-        !visitedAuthors.includes(getAuthorFromUrl(hrefsCoAuthorsList[i])) &&
+        !visitedAuthors.includes(getAuthorNameFromUrl(hrefsCoAuthorsList[i])) &&
         visitedAuthors.length < userLimit
       ) {
-        currentCoAuthor = getAuthorFromUrl(hrefsCoAuthorsList[i]);
+        currentCoAuthor = getAuthorNameFromUrl(hrefsCoAuthorsList[i]);
         scrape("https://www.researchgate.net/" + hrefsCoAuthorsList[i]);
       }
     }
