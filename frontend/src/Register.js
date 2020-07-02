@@ -39,17 +39,18 @@ export default function Register() {
       }),
     };
 
-    fetch("http://localhost:3001/api/register", requestOptions).then(
-      (response) => {
-        if (response.status == 200) {
-          history.push("/login");
-        } else {
-          if (response.status == 400) {
-            alert("User already exists!");
-          }
+    fetch(
+      `${process.env.REACT_APP_REST_API_URL}/register`,
+      requestOptions
+    ).then((response) => {
+      if (response.status == 200) {
+        history.push("/login");
+      } else {
+        if (response.status == 400) {
+          alert("User already exists!");
         }
       }
-    );
+    });
   }
 
   return (

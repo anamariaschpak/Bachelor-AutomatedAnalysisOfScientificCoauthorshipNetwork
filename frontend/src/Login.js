@@ -28,7 +28,7 @@ export default function Login() {
       body: JSON.stringify({ email: email, password: password }),
     };
 
-    fetch("http://localhost:3001/api/login", requestOptions).then(
+    fetch(`${process.env.REACT_APP_REST_API_URL}/login`, requestOptions).then(
       //TODO: port 8080 pe backend
       (response) => {
         if (response.status == 200) {

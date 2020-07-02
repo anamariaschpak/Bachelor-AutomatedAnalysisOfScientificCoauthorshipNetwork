@@ -14,7 +14,7 @@ export default function Home() {
       headers: { "Content-Type": "application/json" },
     };
 
-    fetch("http://localhost:3001/api/getGraphData", requestOptions)
+    fetch(`${process.env.REACT_APP_REST_API_URL}/getGraphData`, requestOptions)
       .then((response) => response.json())
       .then((graphData) => {
         setGraph(graphData);
