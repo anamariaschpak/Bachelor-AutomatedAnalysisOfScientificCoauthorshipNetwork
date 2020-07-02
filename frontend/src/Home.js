@@ -32,9 +32,33 @@ export default function Home() {
     nodes: {
       shape: "circle",
       margin: 1,
+      mass: 2.5,
+      color: {
+        background: "#43bfb5",
+        border: "#000000",
+        border_width: 5,
+        highlight: {
+          background: "#f2cdc3",
+          border: "#000000",
+        },
+      },
     },
     edges: {
-      color: "#000000",
+      color: {
+        color: "#000000",
+        highlight: "#ec157a",
+      },
+      arrowScaleFactor: -1,
+      width: 5,
+    },
+    physics: {
+      barnesHut: {
+        gravitationalConstant: -6500,
+        centralGravity: 2.5,
+        springLength: 200,
+        springConstant: 0.1,
+        damping: 1,
+      },
     },
   };
 
