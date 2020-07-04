@@ -32,7 +32,7 @@ export default function Home() {
     nodes: {
       shape: "circle",
       margin: 1,
-      mass: 2.5,
+      mass: 8,
       color: {
         background: "#43bfb5",
         border: "#000000",
@@ -49,15 +49,30 @@ export default function Home() {
         highlight: "#ec157a",
       },
       arrowScaleFactor: -1,
-      width: 5,
+      arrowStrikethrough: false,
+      width: 3,
+      selectionWidth: function (width) {
+        return width * 2;
+      },
+      smooth: {
+        type: "discrete",
+        forceDirection: "none",
+      },
     },
     physics: {
+      timestep: 0.2,
+      adaptiveTimestep: true,
+      wind: {
+        x: 1,
+        y: 1,
+      },
       barnesHut: {
-        gravitationalConstant: -6500,
-        centralGravity: 2.5,
-        springLength: 200,
-        springConstant: 0.1,
+        gravitationalConstant: -8000,
+        centralGravity: 2,
+        springLength: 150,
+        springConstant: 0.2,
         damping: 1,
+        avoidOverlap: 1,
       },
     },
   };

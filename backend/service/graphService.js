@@ -26,12 +26,11 @@ const author = {
               id: coauthor.name,
               label: coauthor.name,
             });
-
-            graph.edges.push({
-              from: author.name,
-              to: coauthor.name,
-            });
           }
+          graph.edges.push({
+            from: author.name,
+            to: coauthor.name,
+          });
         });
       });
 
