@@ -1,7 +1,7 @@
 const graphService = require("../service/graphService");
 
 const getGraphData = async (request, response) => {
-  const result = await graphService.getGraphData();
+  const result = await graphService.getGraphData(request.body);
 
   if (result) {
     response.status(200).json(result);

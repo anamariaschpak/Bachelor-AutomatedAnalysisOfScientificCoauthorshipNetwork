@@ -71,7 +71,7 @@ const scrape = async (authorUrl) => {
     var lists = await getCoAuthorsListAndHrefsCoAuthorsList(modalUrl);
     var coAuthorsList = lists.coAuthorsList;
     var hrefsCoAuthorsList = lists.hrefsCoAuthorsList;
-    var userLimit = 10;
+    var userLimit = 4;
 
     currentAuthorName = getAuthorNameFromUrl(authorUrl);
     visitedAuthors.push(currentAuthorName);
@@ -142,8 +142,8 @@ const scrape = async (authorUrl) => {
   }
 };
 
-scrape(zamfiProfileUrl);
+//scrape(zamfiProfileUrl);
 //DO NOT REMOVE: SQL query:
 //   select ac.authorId,a.name,ac.coauthorId,c.name from authorcoauthors as ac,coauthors as c,authors as a where ac.coauthorId=c.id and ac.authorId=a.id order by ac.authorid ;
 
-module.exports = scrape;
+module.exports = { scrape, getAuthorNameFromUrl };

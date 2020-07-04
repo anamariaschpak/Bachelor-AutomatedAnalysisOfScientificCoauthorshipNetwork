@@ -1,40 +1,68 @@
 const { Author, Coauthor, Authorcoauthors } = require("../models/models");
+const scraper = require("../scraper/scraper");
+const async = require("async");
 
 const author = {
-  getGraphData: async () => {
+  getGraphData: async (body) => {
     try {
+      console.log(body.URL);
+      await scraper.scrape(body.URL);
+
+      const searchedAuthorName = scraper.getAuthorNameFromUrl(body.URL);
+
       const graph = {
         nodes: [],
         edges: [],
       };
 
-      const authorsAndCoauthorsData = await Author.findAll({
-        include: [Coauthor],
-      });
+      var parsedArray = [];
 
-      authorsAndCoauthorsData.forEach((author) => {
-        if (!graph.nodes.some((node) => node["id"] === author.name)) {
-          graph.nodes.push({
-            id: author.name,
-            label: author.name,
-          });
-        }
-
-        author.Coauthors.forEach((coauthor) => {
-          if (!graph.nodes.some((node) => node["id"] === coauthor.name)) {
-            graph.nodes.push({
-              id: coauthor.name,
-              label: coauthor.name,
-            });
-          }
-          graph.edges.push({
-            from: author.name,
-            to: coauthor.name,
-          });
+      const recursiveFunction = async (name) => {
+        const searchedAuthorData = await Author.findAll({
+          where: { name: name },
+          include: [Coauthor],
         });
-      });
 
-      return graph;
+        if (searchedAuthorData.length != 0) {
+          if (!parsedArray.includes(searchedAuthorData[0].name)) {
+            parsedArray.push(searchedAuthorData[0].name);
+
+            if (
+              !graph.nodes.some(
+                (node) => node["id"] === searchedAuthorData[0].name
+              )
+            ) {
+              graph.nodes.push({
+                id: searchedAuthorData[0].name,
+                label: searchedAuthorData[0].name,
+              });
+            }
+
+            for (let i = 0; i < searchedAuthorData[0].Coauthors.length; i++) {
+              if (
+                !graph.nodes.some(
+                  (node) =>
+                    node["id"] === searchedAuthorData[0].Coauthors[i].name
+                )
+              ) {
+                graph.nodes.push({
+                  id: searchedAuthorData[0].Coauthors[i].name,
+                  label: searchedAuthorData[0].Coauthors[i].name,
+                });
+              }
+              graph.edges.push({
+                from: searchedAuthorData[0].name,
+                to: searchedAuthorData[0].Coauthors[i].name,
+              });
+
+              await recursiveFunction(searchedAuthorData[0].Coauthors[i].name);
+            }
+          }
+        }
+        return graph;
+      };
+
+      return await recursiveFunction(searchedAuthorName);
     } catch (error) {
       console.log(error.message);
     }

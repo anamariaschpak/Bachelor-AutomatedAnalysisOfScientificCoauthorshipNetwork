@@ -2,16 +2,42 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import Graph from "react-graph-vis";
 
-import { Header } from "semantic-ui-react";
+import {
+  Header,
+  Input,
+  Sidebar,
+  Segment,
+  Menu,
+  Icon,
+  Button,
+  Container,
+  Grid,
+  Label,
+} from "semantic-ui-react";
 
 export default function Home() {
   const [graph, setGraph] = useState();
   const [isGraphDataFetched, setIsGraphDataFetched] = useState(false);
+  const [searchedAuthorURL, setSearchedAuthorURL] = useState();
 
   useEffect(() => {
+    // const requestOptions = {
+    //   method: "GET",
+    //   headers: { "Content-Type": "application/json" },
+    // };
+    // fetch(`${process.env.REACT_APP_REST_API_URL}/getGraphData`, requestOptions)
+    //   .then((response) => response.json())
+    //   .then((graphData) => {
+    //     setGraph(graphData);
+    //     setIsGraphDataFetched(true);
+    //   });
+  }, []);
+  console.log("rada");
+  async function handleSearch(event) {
     const requestOptions = {
-      method: "GET",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ URL: searchedAuthorURL }),
     };
 
     fetch(`${process.env.REACT_APP_REST_API_URL}/getGraphData`, requestOptions)
@@ -20,7 +46,7 @@ export default function Home() {
         setGraph(graphData);
         setIsGraphDataFetched(true);
       });
-  }, []);
+  }
 
   const options = {
     height: "720px",
@@ -85,7 +111,36 @@ export default function Home() {
 
   return (
     <div>
-      <Header>Hello!</Header>
+      <Sidebar
+        as={Menu}
+        animation="overlay"
+        icon="labeled"
+        inverted
+        vertical
+        visible
+        width="wide"
+      >
+        <Menu.Item as="a">
+          <Icon name="home" />
+          Home
+        </Menu.Item>
+        <Menu.Item as="a">
+          <Icon name="chart line" />
+          Statistics
+        </Menu.Item>
+      </Sidebar>
+
+      <div>
+        <Input
+          size="huge"
+          placeholder="Search for an author..."
+          onChange={(event) => setSearchedAuthorURL(event.target.value)}
+        ></Input>
+        <Button icon size="huge" onClick={(event) => handleSearch(event)}>
+          <Icon name="search" />
+        </Button>
+      </div>
+
       {isGraphDataFetched ? (
         <Graph graph={graph} options={options} events={events} />
       ) : null}

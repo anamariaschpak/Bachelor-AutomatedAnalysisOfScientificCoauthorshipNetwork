@@ -2,6 +2,7 @@ const { Sequelize, DataTypes } = require("sequelize");
 
 const sequelize = new Sequelize("thesisDB", "root", "p@ss", {
   dialect: "mysql",
+  logging: false,
 });
 
 const Model = Sequelize.Model;
@@ -12,7 +13,7 @@ sequelize
   .then(() => {
     console.log("Connection has been established succesfully.");
   })
-  .then((err) => {
+  .catch((err) => {
     console.log("Unable to connect to the DB: ", err);
   });
 
