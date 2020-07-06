@@ -20,19 +20,6 @@ export default function Home() {
   const [isGraphDataFetched, setIsGraphDataFetched] = useState(false);
   const [searchedAuthorURL, setSearchedAuthorURL] = useState();
 
-  useEffect(() => {
-    // const requestOptions = {
-    //   method: "GET",
-    //   headers: { "Content-Type": "application/json" },
-    // };
-    // fetch(`${process.env.REACT_APP_REST_API_URL}/getGraphData`, requestOptions)
-    //   .then((response) => response.json())
-    //   .then((graphData) => {
-    //     setGraph(graphData);
-    //     setIsGraphDataFetched(true);
-    //   });
-  }, []);
-  console.log("rada");
   async function handleSearch(event) {
     const requestOptions = {
       method: "POST",
@@ -147,6 +134,3 @@ export default function Home() {
     </div>
   );
 }
-
-// const rootElement = document.getElementById("root");
-// ReactDOM.render(<Home />, rootElement);

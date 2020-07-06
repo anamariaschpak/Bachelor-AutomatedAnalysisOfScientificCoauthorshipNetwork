@@ -6,9 +6,15 @@ const author = {
   getGraphData: async (body) => {
     try {
       console.log(body.URL);
-      await scraper.scrape(body.URL);
-
       const searchedAuthorName = scraper.getAuthorNameFromUrl(body.URL);
+
+      const author = await Author.findOne({
+        where: { name: searchedAuthorName },
+      });
+
+      if (!author) {
+        await scraper.scrape(body.URL);
+      }
 
       const graph = {
         nodes: [],
