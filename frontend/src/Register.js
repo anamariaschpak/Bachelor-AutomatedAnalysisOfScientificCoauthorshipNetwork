@@ -47,7 +47,9 @@ export default function Register() {
         history.push("/login");
       } else {
         if (response.status == 400) {
-          alert("User already exists!");
+          response.text().then((text) => {
+            console.log(text);
+          });
         }
       }
     });
@@ -78,6 +80,7 @@ export default function Register() {
             <Form.Input
               fluid
               icon="lock"
+              type="password"
               iconPosition="left"
               placeholder="Password"
               onChange={(ev) => setPassword(ev.target.value)}
@@ -85,6 +88,7 @@ export default function Register() {
             <Form.Input
               fluid
               icon="lock"
+              type="password"
               iconPosition="left"
               placeholder="Confirm password"
               onChange={(ev) => setConfirmPassword(ev.target.value)}

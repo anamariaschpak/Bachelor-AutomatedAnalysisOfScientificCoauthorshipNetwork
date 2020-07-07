@@ -17,21 +17,19 @@ const user = {
         return undefined;
       }
     } catch (error) {
-      // throw new Error("------Aici:" + error.message); => DO NOT uncomment this and DO NOT remove this comment => it causes ERROR
       console.log(error.message);
     }
   },
-  search: async (email) => {
+  search: async (user) => {
     try {
       const foundUser = await User.findOne({
         where: {
-          email: email,
+          email: user.email,
         },
       });
 
       return foundUser;
     } catch (error) {
-      // throw new Error(error.message);
       console.log(error.message);
     }
   },

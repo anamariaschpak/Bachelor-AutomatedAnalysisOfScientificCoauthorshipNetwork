@@ -29,10 +29,17 @@ export default function Login() {
     };
 
     fetch(`${process.env.REACT_APP_REST_API_URL}/login`, requestOptions).then(
-      //TODO: port 8080 pe backend
       (response) => {
         if (response.status == 200) {
           history.push("/home");
+        }
+        if (response.status == 400) {
+          alert(
+            "User not found: the email you entered doesn't match any account!"
+          );
+        }
+        if (response.status == 401) {
+          alert("The password you entered is incorrect!");
         }
       }
     );
