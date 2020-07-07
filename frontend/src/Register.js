@@ -47,9 +47,7 @@ export default function Register() {
         history.push("/login");
       } else {
         if (response.status == 400) {
-          response.text().then((text) => {
-            console.log(text);
-          });
+          alert("User already exists!");
         }
       }
     });
