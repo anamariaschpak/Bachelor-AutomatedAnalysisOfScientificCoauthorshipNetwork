@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, Redirect, useHistory } from "react-router-dom";
 import {
   Button,
@@ -8,12 +8,13 @@ import {
   Message,
   Segment,
 } from "semantic-ui-react";
-import Home from "./Home";
+import { LoginContext } from "./App";
 
-export default function Login() {
+export default function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const history = useHistory();
+  const { setIsLoggedIn } = useContext(LoginContext);
 
   function validateForm() {
     return email.length > 0 && password.length > 0;
@@ -31,6 +32,7 @@ export default function Login() {
     fetch(`${process.env.REACT_APP_REST_API_URL}/login`, requestOptions).then(
       (response) => {
         if (response.status == 200) {
+          setIsLoggedIn(true);
           history.push("/home");
         }
         if (response.status == 400) {

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import ReactDOM from "react-dom";
 import Graph from "react-graph-vis";
+import Login from "./Login";
 
 import {
   Header,
@@ -14,11 +15,13 @@ import {
   Grid,
   Label,
 } from "semantic-ui-react";
+import { LoginContext } from "./App";
 
 export default function Home() {
   const [graph, setGraph] = useState();
   const [isGraphDataFetched, setIsGraphDataFetched] = useState(false);
   const [searchedAuthorURL, setSearchedAuthorURL] = useState();
+  const { setIsLoggedIn } = useContext(LoginContext);
 
   async function handleSearch(event) {
     const requestOptions = {
@@ -27,12 +30,20 @@ export default function Home() {
       body: JSON.stringify({ URL: searchedAuthorURL }),
     };
 
-    fetch(`${process.env.REACT_APP_REST_API_URL}/getGraphData`, requestOptions)
-      .then((response) => response.json())
-      .then((graphData) => {
-        setGraph(graphData);
-        setIsGraphDataFetched(true);
-      });
+    fetch(
+      `${process.env.REACT_APP_REST_API_URL}/getGraphData`,
+      requestOptions
+    ).then((response) => {
+      if (response.status == 404) {
+        alert("Graph data not found!");
+      }
+      if (response.status == 200) {
+        response.json().then((graphData) => {
+          setGraph(graphData);
+          setIsGraphDataFetched(true);
+        });
+      }
+    });
   }
 
   const options = {
@@ -114,6 +125,15 @@ export default function Home() {
         <Menu.Item as="a">
           <Icon name="chart line" />
           Statistics
+        </Menu.Item>
+        <Menu.Item
+          onClick={() => {
+            setIsLoggedIn(false);
+          }}
+          as="a"
+        >
+          <Icon name="log out" />
+          Log Out
         </Menu.Item>
       </Sidebar>
 

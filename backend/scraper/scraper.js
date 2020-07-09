@@ -10,6 +10,10 @@ const getAuthorNameFromUrl = (authorUrl) => {
   return authorUrl.substring(authorUrl.lastIndexOf("/") + 1).replace(/_/g, " ");
 };
 
+const delay = (interval) => {
+  return new Promise((resolve) => setTimeout(resolve, interval));
+};
+
 const getModalUrl = (authorUrl) => {
   return new Promise(async (resolve) => {
     await delay(5000);
@@ -41,7 +45,6 @@ const getCoAuthorsListAndHrefsCoAuthorsList = (modalUrl) => {
     request(modalUrl, function (error, response, modalHtml) {
       var $ = cheerio.load(modalHtml);
       console.log("Coauthors list status code: " + response.statusCode);
-      console.log(response.headers);
       var coAuthorsList = [];
       var hrefsCoAuthorsList = [];
 
@@ -59,10 +62,6 @@ const getCoAuthorsListAndHrefsCoAuthorsList = (modalUrl) => {
       });
     });
   });
-};
-
-const delay = (interval) => {
-  new Promise((resolve) => setTimeout(resolve, interval));
 };
 
 const scrape = async (authorUrl) => {
@@ -99,7 +98,7 @@ const scrape = async (authorUrl) => {
             defaults: {
               name: coAuthorName.trim(),
             },
-          }).then(function (coauthorResult) {
+          }).then(async function (coauthorResult) {
             var coauthor = coauthorResult[0];
             var createdCoauthor = coauthorResult[1];
 
@@ -110,10 +109,11 @@ const scrape = async (authorUrl) => {
               coauthor.addAuthor(author, { through: Authorcoauthors });
             } else {
               console.log("11111111111111 CoAuthor created 11111111111111");
+              console.log(coAuthorName);
 
               author.addCoauthor(coauthor, { through: Authorcoauthors });
               author.isParsed = true;
-              author.save();
+              await author.save();
             }
 
             callback();
@@ -141,10 +141,11 @@ const scrape = async (authorUrl) => {
               coauthor.addAuthor(author, { through: Authorcoauthors });
             } else {
               console.log("11111111111111 CoAuthor created 11111111111111");
+              console.log(coAuthorName);
 
               author.addCoauthor(coauthor, { through: Authorcoauthors });
               author.isParsed = true;
-              author.save();
+              await author.save();
             }
 
             callback();

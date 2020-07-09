@@ -1,6 +1,5 @@
-const { Author, Coauthor, Authorcoauthors } = require("../models/models");
+const { Author, Coauthor } = require("../models/models");
 const scraper = require("../scraper/scraper");
-const async = require("async");
 
 const author = {
   getGraphData: async (body) => {
@@ -8,11 +7,14 @@ const author = {
       console.log(body.URL);
       const searchedAuthorName = scraper.getAuthorNameFromUrl(body.URL);
 
-      const author = await Author.findOne({
+      const author = await Author.findAll({
         where: { name: searchedAuthorName },
+        include: [Coauthor],
       });
 
-      if (!author) {
+      if (author[0] === undefined) {
+        await scraper.scrape(body.URL);
+      } else if (author[0].Coauthors.length < 2) {
         await scraper.scrape(body.URL);
       }
 
