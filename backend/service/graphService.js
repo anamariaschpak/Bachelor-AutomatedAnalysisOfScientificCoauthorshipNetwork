@@ -14,9 +14,23 @@ const author = {
 
       if (author[0] === undefined) {
         await scraper.scrape(body.URL);
-      } else if (author[0].Coauthors.length < 2) {
-        await scraper.scrape(body.URL);
+      } else if (author[0].Coauthors[3]) {
+        const coauthorAlsoAuthor = await Author.findOne({
+          where: {
+            name: author[0].Coauthors[3].name,
+          },
+        });
+
+        if (coauthorAlsoAuthor === undefined) {
+          await scraper.scrape(body.URL);
+        }
       }
+
+      // if (author[0] === undefined) {
+      //   await scraper.scrape(body.URL);
+      // } else if (author[0].Coauthors.length < 2) {
+      //   await scraper.scrape(body.URL);
+      // }
 
       const graph = {
         nodes: [],

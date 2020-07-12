@@ -1,27 +1,18 @@
-import React, { useEffect, useState, useContext } from "react";
-import ReactDOM from "react-dom";
+import React, { useState, useContext, useEffect } from "react";
 import Graph from "react-graph-vis";
-import Login from "./Login";
-
-import {
-  Header,
-  Input,
-  Sidebar,
-  Segment,
-  Menu,
-  Icon,
-  Button,
-  Container,
-  Grid,
-  Label,
-} from "semantic-ui-react";
-import { LoginContext } from "./App";
+import { Input, Icon, Button } from "semantic-ui-react";
+import { GraphDataContext } from "./App";
 
 export default function Home() {
-  const [graph, setGraph] = useState();
   const [isGraphDataFetched, setIsGraphDataFetched] = useState(false);
   const [searchedAuthorURL, setSearchedAuthorURL] = useState();
-  const { setIsLoggedIn } = useContext(LoginContext);
+  const { graph, setGraph } = useContext(GraphDataContext);
+
+  useEffect(() => {
+    if (graph != null) {
+      setIsGraphDataFetched(true);
+    }
+  }, []);
 
   async function handleSearch(event) {
     const requestOptions = {
@@ -47,8 +38,8 @@ export default function Home() {
   }
 
   const options = {
-    height: "720px",
-    width: "1280px",
+    width: window.innerWidth + "px",
+    height: window.innerHeight - 150 + "px",
     autoResize: true,
     layout: {
       hierarchical: false,
@@ -57,10 +48,10 @@ export default function Home() {
       shape: "circle",
       margin: 1,
       mass: 8,
+      borderWidth: 2,
       color: {
         background: "#43bfb5",
         border: "#000000",
-        border_width: 5,
         highlight: {
           background: "#f2cdc3",
           border: "#000000",
@@ -72,7 +63,7 @@ export default function Home() {
         color: "#000000",
         highlight: "#ec157a",
       },
-      arrowScaleFactor: -1,
+
       arrowStrikethrough: false,
       width: 3,
       selectionWidth: function (width) {
@@ -109,34 +100,6 @@ export default function Home() {
 
   return (
     <div>
-      <Sidebar
-        as={Menu}
-        animation="overlay"
-        icon="labeled"
-        inverted
-        vertical
-        visible
-        width="wide"
-      >
-        <Menu.Item as="a">
-          <Icon name="home" />
-          Home
-        </Menu.Item>
-        <Menu.Item as="a">
-          <Icon name="chart line" />
-          Statistics
-        </Menu.Item>
-        <Menu.Item
-          onClick={() => {
-            setIsLoggedIn(false);
-          }}
-          as="a"
-        >
-          <Icon name="log out" />
-          Log Out
-        </Menu.Item>
-      </Sidebar>
-
       <div>
         <Input
           size="huge"
@@ -147,10 +110,11 @@ export default function Home() {
           <Icon name="search" />
         </Button>
       </div>
-
-      {isGraphDataFetched ? (
-        <Graph graph={graph} options={options} events={events} />
-      ) : null}
+      <div>
+        {isGraphDataFetched ? (
+          <Graph graph={graph} options={options} events={events} />
+        ) : null}
+      </div>
     </div>
   );
 }

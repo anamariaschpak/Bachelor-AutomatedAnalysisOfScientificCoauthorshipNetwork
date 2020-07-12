@@ -70,7 +70,7 @@ const scrape = async (authorUrl) => {
     var lists = await getCoAuthorsListAndHrefsCoAuthorsList(modalUrl);
     var coAuthorsList = lists.coAuthorsList;
     var hrefsCoAuthorsList = lists.hrefsCoAuthorsList;
-    var userLimit = 10;
+    var userLimit = 5;
 
     currentAuthorName = getAuthorNameFromUrl(authorUrl);
     visitedAuthors.push(currentAuthorName);
