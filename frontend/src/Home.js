@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import Graph from "react-graph-vis";
-import { Input, Icon, Button } from "semantic-ui-react";
+import { Input, Icon, Button, Header } from "semantic-ui-react";
 import { GraphDataContext } from "./App";
 
 export default function Home() {
@@ -101,6 +101,9 @@ export default function Home() {
   return (
     <div>
       <div>
+        <Header as="h4">
+          *Note: please be patient, requests may be in action
+        </Header>
         <Input
           size="huge"
           placeholder="Search for an author..."

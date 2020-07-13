@@ -23,7 +23,7 @@ User.init(
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
-      autoIncrement: true, //would it be better to be a string and not autoIncrement-able?
+      autoIncrement: true,
     },
     username: {
       type: Sequelize.STRING,

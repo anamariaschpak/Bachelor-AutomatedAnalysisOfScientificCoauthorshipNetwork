@@ -21,16 +21,10 @@ const author = {
           },
         });
 
-        if (coauthorAlsoAuthor === undefined) {
+        if (!coauthorAlsoAuthor) {
           await scraper.scrape(body.URL);
         }
       }
-
-      // if (author[0] === undefined) {
-      //   await scraper.scrape(body.URL);
-      // } else if (author[0].Coauthors.length < 2) {
-      //   await scraper.scrape(body.URL);
-      // }
 
       const graph = {
         nodes: [],
