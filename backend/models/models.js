@@ -7,7 +7,6 @@ const sequelize = new Sequelize("thesisDB", "root", "p@ss", {
 
 const Model = Sequelize.Model;
 
-//doesn't log anything yet
 sequelize
   .authenticate()
   .then(() => {

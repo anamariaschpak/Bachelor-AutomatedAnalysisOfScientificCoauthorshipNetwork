@@ -31,17 +31,17 @@ const author = {
         edges: [],
       };
 
-      var parsedArray = [];
+      var visitedAuthors = [];
 
-      const recursiveFunction = async (name) => {
+      const fillNetworkWithData = async (name) => {
         const searchedAuthorData = await Author.findAll({
           where: { name: name },
           include: [Coauthor],
         });
 
         if (searchedAuthorData.length != 0) {
-          if (!parsedArray.includes(searchedAuthorData[0].name)) {
-            parsedArray.push(searchedAuthorData[0].name);
+          if (!visitedAuthors.includes(searchedAuthorData[0].name)) {
+            visitedAuthors.push(searchedAuthorData[0].name);
 
             if (
               !graph.nodes.some(
@@ -71,14 +71,16 @@ const author = {
                 to: searchedAuthorData[0].Coauthors[i].name,
               });
 
-              await recursiveFunction(searchedAuthorData[0].Coauthors[i].name);
+              await fillNetworkWithData(
+                searchedAuthorData[0].Coauthors[i].name
+              );
             }
           }
         }
         return graph;
       };
 
-      return await recursiveFunction(searchedAuthorName);
+      return await fillNetworkWithData(searchedAuthorName);
     } catch (error) {
       console.log(error.message);
     }

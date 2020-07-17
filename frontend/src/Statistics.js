@@ -42,11 +42,11 @@ export default function Statistics() {
       <div style={{ width: graphWidth, height: graphHeight }}>
         <ResponsiveContainer>
           <BarChart
-            width={730}
-            height={250}
+            width={graphWidth}
+            height={graphHeight}
             data={graphData}
             layout="vertical"
-            margin={{ left: 10 }}
+            margin={{ left: 50 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis type="number" />

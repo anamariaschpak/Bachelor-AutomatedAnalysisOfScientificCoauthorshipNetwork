@@ -24,7 +24,7 @@ export default function Login(props) {
     event.preventDefault();
 
     const requestOptions = {
-      method: "POST", //to do: why post and not get in login
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: email, password: password }),
     };
